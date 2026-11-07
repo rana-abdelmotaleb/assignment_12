@@ -9,6 +9,7 @@ import {
 import { auth } from "../../common/middleware/auth.middleware.js";
 import { checkRole } from "../../common/middleware/checkRole.js";
 import { upload } from "../../common/middleware/multer.js";
+import { optionalAuth } from "../../common/middleware/optionalAuthmiddleware.js";
 const router = Router();
 // get all messages
 router.get("/get_all_message", auth, checkRole(["1"]), async (req, res) => {
@@ -16,10 +17,15 @@ router.get("/get_all_message", auth, checkRole(["1"]), async (req, res) => {
   res.json(data);
 });
 // add messages
-router.post("/create_message", upload().single("image"), async (req, res) => {
-  let data = await createMessages(req.body, req.file);
-  res.json(data);
-});
+router.post(
+  "/create_message",
+  optionalAuth,
+  upload().single("image"),
+  async (req, res) => {
+    let data = await createMessages(req.body, req.file, req.user);
+    res.json(data);
+  },
+);
 //user url
 router.get("/user-url", auth, async (req, res) => {
   let data = await userUrl(req.user);

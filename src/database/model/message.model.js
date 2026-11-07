@@ -13,6 +13,11 @@ const messageSchema = Schema(
       required: true,
       ref: "user",
     },
+    senderId: {
+      type: Types.ObjectId,
+      ref: "user",
+      default: null,
+    },
     messageImage: {
       type: String,
       required: false,

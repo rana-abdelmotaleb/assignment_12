@@ -1,7 +1,7 @@
 import { BadRequestException } from "../../common/exciptions/error.exciptions.js";
 import { messageModel } from "../../database/model/message.model.js";
 import { userModel } from "../../database/model/user.model.js";
-
+//get all messages
 export const getAllMessages = async () => {
   let data = await messageModel.find();
   if (data.length > 0) {
@@ -12,9 +12,11 @@ export const getAllMessages = async () => {
     });
   }
 };
-export const createMessages = async (body, file) => {
+//create messages
+export const createMessages = async (body, file, user) => {
   let { content, reciverId } = body;
   let messageImage;
+  let senderId = user?.id || null;
   let exits = await userModel.findById(reciverId);
   if (!exits) {
     return BadRequestException({ message: "user Not Found " });
@@ -25,6 +27,7 @@ export const createMessages = async (body, file) => {
   let createMessage = await messageModel.insertOne({
     content,
     reciverId,
+    senderId,
     messageImage,
   });
   if (createMessage) {
